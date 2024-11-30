@@ -8,11 +8,19 @@ export class ProductsService {
   constructor(private readonly prismaService : PrismaService) {}
  
   async create(createProductDto: CreateProductDto){
+    const existingProduct = await this.prismaService.products.findMany({
+      where: { product_name: createProductDto.product_name }
+    });
+    if (existingProduct) {
+      return { message: 'This product already exists' };
+    }
+    else{
     const newProduct = await this.prismaService.products.create(
     {
       data: createProductDto
     });
     return {CreateStatus: "Create Success", newProduct};
+  }
   }
 
   async findAll() {
