@@ -8,10 +8,11 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProfileModule } from './profile/profile.module';
 import { ProfileController } from './profile/profile.controller';
+import { PrismaModule } from './prisma/prisma.module';
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
-  }),ProductsModule, AuthModule, ProfileModule,],
+  }),ProductsModule, AuthModule, ProfileModule, PrismaModule,],
   controllers: [AppController],
   providers: [AppService],
 })

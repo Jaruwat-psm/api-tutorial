@@ -8,7 +8,11 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
+ async create(@Body() createProductDto: CreateProductDto) {
+    const existingProduct = await this.productsService.findByName(createProductDto.product_name)
+    if (existingProduct) {
+      return { message: 'This product already exists' };
+    }
     return this.productsService.create(createProductDto);
   }
 
