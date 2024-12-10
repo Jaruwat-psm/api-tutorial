@@ -9,9 +9,9 @@ datasource db {
 
 model Products {
   product_id       String  @id @db.VarChar(50)
-  product_name     String  @db.VarChar(100)
-  product_desc     String  @db.VarChar(100)
-  product_path     String? @db.VarChar(200)
-  product_type     String  @db.VarChar(200)
-  product_filename String? @db.VarChar(100)
+  product_name     String? @db.VarChar(50)
+  product_desc     String? @db.VarChar(50)
+  product_path     String? @db.VarChar(250)
+  product_type     String? @db.VarChar(50)
+  product_filename String? @db.VarChar(50)
 }

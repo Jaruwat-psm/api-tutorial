@@ -39,9 +39,25 @@ export class ProductsService {
     }
   }
 
-  update(id: string, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    // ตรวจสอบว่ามี Product ที่ต้องการอัปเดตหรือไม่
+    const existingProduct = await this.prismaService.products.findUnique({
+      where: { product_id: id },
+    });
+  
+    if (!existingProduct) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+  
+    // อัปเดตข้อมูล
+    const updatedProduct = await this.prismaService.products.update({
+      where: { product_id: id },  // ระบุข้อมูลที่จะอัปเดตด้วย product_id
+      data: updateProductDto,    // อัปเดตข้อมูลที่ส่งมาจาก DTO
+    });
+  
+    return updatedProduct; // คืนค่าข้อมูลที่อัปเดตกลับไป
   }
+  
 
   remove(id: string) {
     return `This action removes a #${id} product`;
