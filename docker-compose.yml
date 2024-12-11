@@ -2,11 +2,14 @@ version: "3.8"
 services:
 
   nestapi:
-    image: nestapi
-    container_name: nestapi-app
+    image: api
+    container_name: API
     build: .
     ports:
       - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:latest
@@ -28,6 +31,11 @@ services:
       - "8080:80"
     depends_on:
       - db
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
 
 volumes:
   db:

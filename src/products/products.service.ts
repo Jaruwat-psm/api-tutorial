@@ -1,17 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 @Injectable()
 export class ProductsService {
 
-  constructor(private readonly prismaService : PrismaService) {}
+  constructor(private readonly prismaService : PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: CacheStore
+  ) {}
  
   async create(createProductDto: CreateProductDto){
+    const cacheKey = 'allProducts';
     const existingProduct = await this.prismaService.products.findMany({
       where: { product_name: createProductDto.product_name }
     });
-    if (existingProduct) {
+    if (existingProduct.length > 0) {
       return { message: 'This product already exists' };
     }
     else{
@@ -19,12 +23,28 @@ export class ProductsService {
     {
       data: createProductDto
     });
+    await this.clearCache(cacheKey);
     return {CreateStatus: "Create Success", newProduct};
   }
   }
 
   async findAll() {
-    return this.prismaService.products.findMany();
+    const cacheKey = 'allProducts';
+
+    const cachedProducts = await this.cacheManager.get(cacheKey);
+
+    if(cachedProducts) {
+      return cachedProducts;
+    }
+
+    const products = await this.prismaService.products.findMany();
+
+    if(products && products.length > 0) {
+      await this.setCacheData(cacheKey, products);
+      return products;
+    } else{
+      return { message: "NO PRODUCT AVAILABLE !"}
+    }
   }
 
   async findOne(id: string) {
@@ -40,7 +60,6 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    // ตรวจสอบว่ามี Product ที่ต้องการอัปเดตหรือไม่
     const existingProduct = await this.prismaService.products.findUnique({
       where: { product_id: id },
     });
@@ -49,7 +68,6 @@ export class ProductsService {
       throw new NotFoundException(`Product with ID ${id} not found`);
     }
   
-    // อัปเดตข้อมูล
     const updatedProduct = await this.prismaService.products.update({
       where: { product_id: id },  // ระบุข้อมูลที่จะอัปเดตด้วย product_id
       data: updateProductDto,    // อัปเดตข้อมูลที่ส่งมาจาก DTO
@@ -72,5 +90,13 @@ export class ProductsService {
     }else{
       return false;
     }
+  }
+
+  async setCacheData(key: string, value: any): Promise<void> {
+    await this.cacheManager.set(key, value, { ttl: 300 }); // บันทึกข้อมูล Cache พร้อม TTL 300 วินาที
+  }
+  
+  async clearCache(key: string): Promise<void> {
+    await this.cacheManager.del(key); // ลบข้อมูลจาก Cache
   }
 }
