@@ -6,7 +6,7 @@ services:
     container_name: API
     build: .
     ports:
-      - "3000:3000"
+      - "443:3000"
     depends_on:
       db:
         condition: service_healthy
