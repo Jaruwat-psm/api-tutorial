@@ -7,11 +7,438 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Products {
-  product_id       String  @id @db.VarChar(50)
-  product_name     String? @db.VarChar(50)
-  product_desc     String? @db.VarChar(50)
-  product_path     String? @db.VarChar(250)
-  product_type     String? @db.VarChar(50)
-  product_filename String? @db.VarChar(50)
+model auction_document {
+  ID             Int      @id @default(autoincrement())
+  Title          String?  @db.VarChar(1000)
+  Date           String   @db.VarChar(100)
+  years          String   @db.VarChar(100)
+  AD_ID          String?  @db.VarChar(10)
+  ND_ID          String?  @db.VarChar(10)
+  Avenue         String   @db.VarChar(500)
+  Budget         Decimal  @db.Decimal(15, 2)
+  NUMBER_PROJECT String   @db.VarChar(100)
+  FIRSTNAME      String   @db.VarChar(300)
+  TIMESTAMP      DateTime @default(now()) @db.Timestamp(0)
+}
+
+model comercial_area_contract {
+  ID            Int                            @id @default(autoincrement())
+  being         String                         @default("ธ.") @db.VarChar(10)
+  Number        String                         @db.VarChar(20)
+  ROOM_NUMBER   String?                        @db.VarChar(20)
+  Title         String                         @db.VarChar(500)
+  Owner         String                         @db.VarChar(300)
+  date_Start    String?                        @db.VarChar(100)
+  date_End      String?                        @db.VarChar(100)
+  time_Range    String?                        @db.VarChar(200)
+  Date          String                         @db.VarChar(30)
+  Status        comercial_area_contract_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                        @db.VarChar(200)
+  depart_NUMBER String?                        @db.VarChar(100)
+  years         String?                        @db.VarChar(4)
+  timestamp     DateTime                       @default(now()) @db.Timestamp(0)
+  doc_type      String?                        @default("เอกสารสัญญาพื้นที่ธุรกิจ") @db.VarChar(200)
+  budget_year   String?                        @db.VarChar(10)
+  Data_Expire   String                         @default("รอการตรวจสอบ") @db.VarChar(100)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model contract_document {
+  ID            Int      @id @default(autoincrement())
+  Number        String   @db.VarChar(20)
+  Subject       String   @db.VarChar(1000)
+  Vendor        String?  @db.VarChar(500)
+  Date          String   @db.VarChar(100)
+  Rent          Decimal? @db.Decimal(15, 2)
+  Start_Rent    String?  @db.VarChar(20)
+  End_rent      String?  @db.VarChar(20)
+  warranty      Decimal? @db.Decimal(15, 2)
+  guarantee     String?  @db.VarChar(1000)
+  filename      String?  @db.VarChar(1000)
+  depart_NUMBER Int?
+  FIRSTNAME     String   @db.VarChar(100)
+  Timestamp     DateTime @default(now()) @db.Timestamp(0)
+  budget_year   String?  @db.VarChar(20)
+  years         String   @db.VarChar(20)
+  doc_type      String   @default("เอกสารสัญญา") @db.VarChar(100)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model convention_external {
+  ID            Int                        @id @default(autoincrement())
+  being         String                     @default("67.16/") @db.VarChar(10)
+  Number        String                     @db.VarChar(20)
+  Title         String                     @db.VarChar(500)
+  budget        Decimal?                   @db.Decimal(15, 2)
+  Owner         String                     @db.VarChar(300)
+  by_commander  String?                    @db.VarChar(200)
+  from_depart   String?                    @db.VarChar(200)
+  Date          String                     @db.VarChar(30)
+  Status        convention_external_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                    @db.VarChar(200)
+  depart_NUMBER String?                    @db.VarChar(100)
+  years         String?                    @db.VarChar(4)
+  timestamp     DateTime                   @default(now()) @db.Timestamp(0)
+  doc_type      String?                    @default("สมุดออกเลขภายนอกฝ่ายหอประชุม") @db.VarChar(200)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model convention_po {
+  ID            Int                  @id @default(autoincrement())
+  being         String               @default("Q") @db.VarChar(5)
+  Number        String               @db.VarChar(20)
+  Title         String               @db.VarChar(500)
+  budget        Decimal?             @db.Decimal(15, 2)
+  Owner         String               @db.VarChar(300)
+  by_commander  String?              @db.VarChar(200)
+  from_depart   String?              @db.VarChar(200)
+  Date          String               @db.VarChar(30)
+  Status        convention_po_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?              @db.VarChar(200)
+  depart_NUMBER String?              @db.VarChar(100)
+  years         String?              @db.VarChar(4)
+  timestamp     DateTime             @default(now()) @db.Timestamp(0)
+  doc_type      String?              @default("เอกสารใบเสนอราคา") @db.VarChar(200)
+}
+
+model depart_detail {
+  Depart_ID     Int    @id @default(autoincrement())
+  depart_NAME   String @db.VarChar(100)
+  depart_NUMBER Int
+}
+
+model emp_master {
+  ID         Int    @id
+  EMP_ID     String @db.VarChar(10)
+  EMP_PATH   String @db.VarChar(200)
+  EMP_NAME   String @db.VarChar(300)
+  EMP_EMAIL  String @db.VarChar(100)
+  EMP_DEPART String @db.VarChar(200)
+  EMP_POS1   String @db.VarChar(300)
+  EMP_POS2   String @db.VarChar(300)
+  EMP_POS3   String @db.VarChar(300)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model inbox_document {
+  ID                Int       @id @default(autoincrement())
+  inbox_id          String?   @db.VarChar(20)
+  book_id           String?   @db.VarChar(100)
+  inbox_subject     String    @db.VarChar(5000)
+  book_date         String?   @db.VarChar(100)
+  date_receive      String    @db.VarChar(100)
+  time_receive      String    @db.VarChar(100)
+  rc_date           String?   @db.VarChar(100)
+  rc_time           String?   @db.VarChar(100)
+  inbox_path_doc    String?   @db.VarChar(1000)
+  inbox_documents   String?   @db.VarChar(1000)
+  inbox_status      String    @db.VarChar(100)
+  rc_status         String?   @db.VarChar(200)
+  FIRSTNAME         String    @db.VarChar(300)
+  too_people        String    @db.VarChar(1000)
+  Owner             String?   @db.VarChar(200)
+  receive_FIRSTNAME String?   @db.VarChar(150)
+  remark            String?   @db.VarChar(999)
+  timestamp         DateTime  @default(now()) @db.Timestamp(0)
+  years             String?   @db.VarChar(4)
+  doc_type          String    @default("รับเข้าจากภายนอก") @db.VarChar(100)
+}
+
+model inbox_document_log {
+  ID           Int      @id @default(autoincrement())
+  inbox_id     String   @db.VarChar(100)
+  remark_LOG   String   @db.VarChar(1000)
+  datetime_LOG String   @db.VarChar(100)
+  TIMESTAMP    DateTime @default(now()) @db.Timestamp(0)
+  doc_STATUS   String   @db.VarChar(100)
+  doc_AT       String?  @db.VarChar(300)
+  rejectBY     String   @db.VarChar(1000)
+  years        String?  @db.VarChar(10)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model internal_office {
+  ID                Int       @id @default(autoincrement())
+  inbox_id          String?   @db.VarChar(20)
+  book_id           String?   @db.VarChar(100)
+  inbox_subject     String    @db.VarChar(5000)
+  book_date         String?   @db.VarChar(50)
+  date_receive      String    @db.VarChar(100)
+  time_receive      String    @db.VarChar(100)
+  rc_date           String?   @db.VarChar(100)
+  rc_time           String?   @db.VarChar(100)
+  inbox_path_doc    String?   @db.VarChar(1000)
+  inbox_documents   String?   @db.VarChar(1000)
+  inbox_status      String    @db.VarChar(100)
+  rc_status         String?   @db.VarChar(200)
+  FIRSTNAME         String    @db.VarChar(300)
+  too_people        String    @db.VarChar(1000)
+  Owner             String?   @db.VarChar(200)
+  receive_FIRSTNAME String?   @db.VarChar(150)
+  timestamp         DateTime  @default(now()) @db.Timestamp(0)
+  years             String?   @db.VarChar(4)
+  doc_type          String    @default("รับเข้าจากภายใน") @db.VarChar(100)
+}
+
+model log_file {
+  ID            Int       @id @default(autoincrement())
+  Number        String?   @db.VarChar(100)
+  title_o       String?   @db.VarChar(1000)
+  title_new     String?   @db.VarChar(1000)
+  budget_o      String?   @db.VarChar(100)
+  budget_new    String?   @db.VarChar(100)
+  status_o      String?   @db.VarChar(100)
+  status_new    String?   @db.VarChar(100)
+  remark_o      String?   @db.VarChar(500)
+  remark_new    String?   @db.VarChar(500)
+  FIRSTNAME     String?   @db.VarChar(100)
+  depart_NUMBER Int?
+  Datetime      DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model login_log {
+  ID        Int      @id @default(autoincrement())
+  FIRSTNAME String   @db.VarChar(200)
+  IPADDRESS String   @db.VarChar(20)
+  TIMESTAMP DateTime @default(now()) @db.Timestamp(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model number_office {
+  ID            Int                  @id @default(autoincrement())
+  Number        String               @db.VarChar(20)
+  Title         String               @db.VarChar(500)
+  budget        Decimal?             @db.Decimal(15, 2)
+  Owner         String               @db.VarChar(300)
+  commander     String?              @db.VarChar(100)
+  from_depart   String?              @db.VarChar(200)
+  Date          String               @db.VarChar(30)
+  Status        number_office_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?              @db.VarChar(200)
+  or_part       String?              @db.VarChar(1000)
+  or_file       String?              @db.VarChar(1000)
+  depart_NUMBER String?              @db.VarChar(100)
+  years         String?              @db.VarChar(4)
+  timestamp     DateTime             @default(now()) @db.Timestamp(0)
+  doc_type      String               @default("หนังสือ(อว)สำนักงาน") @db.VarChar(100)
+}
+
+model out_announcement {
+  ID            Int                     @id @default(autoincrement())
+  Number        String                  @db.VarChar(20)
+  Title         String                  @db.VarChar(500)
+  an_file       String?                 @db.VarChar(1000)
+  an_partfile   String?                 @db.VarChar(1000)
+  budget        Decimal?                @db.Decimal(15, 2)
+  Owner         String                  @db.VarChar(300)
+  from_depart   String?                 @db.VarChar(200)
+  Date          String                  @db.VarChar(30)
+  Status        out_announcement_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                 @db.VarChar(200)
+  depart_NUMBER String?                 @db.VarChar(100)
+  years         String?                 @db.VarChar(4)
+  timestamp     DateTime                @default(now()) @db.Timestamp(0)
+  doc_type      String                  @default("ประกาศสำนักงาน") @db.VarChar(100)
+}
+
+model out_officeorder {
+  ID            Int                    @id @default(autoincrement())
+  Number        String                 @db.VarChar(20)
+  Title         String                 @db.VarChar(500)
+  budget        Decimal?               @db.Decimal(15, 2)
+  Owner         String                 @db.VarChar(300)
+  by_commander  String?                @db.VarChar(200)
+  from_depart   String?                @db.VarChar(200)
+  Date          String                 @db.VarChar(30)
+  Status        out_officeorder_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                @db.VarChar(200)
+  or_part       String?                @db.VarChar(1000)
+  or_file       String?                @db.VarChar(1000)
+  depart_NUMBER String?                @db.VarChar(100)
+  years         String?                @db.VarChar(4)
+  timestamp     DateTime               @default(now()) @db.Timestamp(0)
+  doc_type      String                 @default("เลขคำสั่ง") @db.VarChar(100)
+}
+
+model procurement {
+  ID            Int                @id @default(autoincrement())
+  being         String             @default("พส") @db.VarChar(5)
+  Number        String             @db.VarChar(20)
+  Title         String             @db.VarChar(500)
+  budget        Decimal?           @db.Decimal(15, 2)
+  Owner         String             @db.VarChar(300)
+  by_commander  String?            @db.VarChar(200)
+  from_depart   String?            @db.VarChar(200)
+  Date          String             @db.VarChar(30)
+  Status        procurement_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?            @db.VarChar(200)
+  depart_NUMBER String?            @db.VarChar(100)
+  years         String?            @db.VarChar(4)
+  timestamp     DateTime           @default(now()) @db.Timestamp(0)
+  doc_type      String?            @default("เอกสารออกเลขคำสั่ง(พส) ") @db.VarChar(200)
+}
+
+model procurement_bookout {
+  ID            Int                        @id @default(autoincrement())
+  being         String                     @default("อว 67.16/พส") @db.VarChar(20)
+  Number        String                     @db.VarChar(20)
+  Title         String                     @db.VarChar(500)
+  Owner         String                     @db.VarChar(300)
+  by_commander  String?                    @db.VarChar(200)
+  from_depart   String?                    @db.VarChar(200)
+  Date          String                     @db.VarChar(30)
+  Status        procurement_bookout_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                    @db.VarChar(200)
+  depart_NUMBER String?                    @db.VarChar(100)
+  years         String?                    @db.VarChar(4)
+  timestamp     DateTime                   @default(now()) @db.Timestamp(0)
+  doc_type      String?                    @default("หนังสือออกภายนอก") @db.VarChar(200)
+}
+
+model procurement_hire {
+  ID            Int                     @id @default(autoincrement())
+  Number        String                  @db.VarChar(20)
+  Title         String                  @db.VarChar(500)
+  budget        Decimal?                @db.Decimal(15, 2)
+  Owner         String                  @db.VarChar(300)
+  by_commander  String?                 @db.VarChar(200)
+  from_depart   String?                 @db.VarChar(200)
+  Date          String                  @db.VarChar(30)
+  Status        procurement_hire_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                 @db.VarChar(200)
+  path          String?                 @db.VarChar(1000)
+  filename      String?                 @db.VarChar(1000)
+  depart_NUMBER String?                 @db.VarChar(100)
+  month         String?                 @db.VarChar(10)
+  budget_year   String?                 @db.VarChar(20)
+  years         String?                 @db.VarChar(4)
+  Reset         String                  @default("N") @db.VarChar(10)
+  timestamp     DateTime                @default(now()) @db.Timestamp(0)
+  doc_type      String?                 @default("เอกสารใบสั่งจ้าง") @db.VarChar(200)
+}
+
+model procurement_purchase {
+  ID            Int                         @id @default(autoincrement())
+  Number        String                      @db.VarChar(20)
+  Title         String                      @db.VarChar(500)
+  budget        Decimal?                    @db.Decimal(15, 2)
+  Owner         String                      @db.VarChar(300)
+  by_commander  String?                     @db.VarChar(200)
+  from_depart   String?                     @db.VarChar(200)
+  Date          String                      @db.VarChar(30)
+  Status        procurement_purchase_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                     @db.VarChar(200)
+  path          String?                     @db.VarChar(1000)
+  filename      String?                     @db.VarChar(1000)
+  depart_NUMBER String?                     @db.VarChar(100)
+  month         String?                     @db.VarChar(10)
+  budget_year   String?                     @db.VarChar(20)
+  years         String?                     @db.VarChar(4)
+  Reset         String                      @default("N") @db.VarChar(10)
+  timestamp     DateTime                    @default(now()) @db.Timestamp(0)
+  doc_type      String?                     @default("เอกสารใบสั่งซื้อ") @db.VarChar(200)
+}
+
+model reset_password {
+  reset_ID Int    @id @default(autoincrement())
+  user_ID  Int
+  token    String @db.VarChar(100)
+}
+
+model sarabun_documents {
+  ID            Int                      @id @default(autoincrement())
+  Number        String                   @db.VarChar(20)
+  Title         String                   @db.VarChar(1000)
+  budget        Decimal?                 @db.Decimal(15, 2)
+  Owner         String                   @db.VarChar(300)
+  Approve       String?                  @db.VarChar(100)
+  Date          String                   @db.VarChar(30)
+  Status        sarabun_documents_Status @default(dbgenerated("อนุมัติ"))
+  remark        String?                  @db.VarChar(1000)
+  depart_NUMBER String?                  @db.VarChar(100)
+  years         String?                  @db.VarChar(4)
+  timestamp     DateTime                 @default(now()) @db.Timestamp(0)
+}
+
+model token_cookie {
+  token_ID   Int       @id @default(autoincrement())
+  user_id    String    @db.VarChar(100)
+  FIRSTNAME  String?   @db.VarChar(500)
+  Department String?   @db.VarChar(500)
+  token      String    @db.VarChar(100)
+  TIMESTAMP  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model user_login {
+  user_ID       Int      @id @default(autoincrement())
+  username      String   @db.VarChar(100)
+  password      String   @db.VarChar(100)
+  FIRSTNAME     String   @db.VarChar(200)
+  user_FILE     String   @db.VarChar(1000)
+  user_STATUS   String   @default("'รอการอนุมัติ','อนุมัติ','ไม่อนุมัติ'") @db.VarChar(50)
+  ApproveByName String?  @db.VarChar(200)
+  TIMESTAMP     DateTime @default(now()) @db.Timestamp(0)
+  LAST_LOGIN    DateTime @default(now()) @db.Timestamp(0)
+  IPADDRESS     String?  @db.VarChar(50)
+}
+
+model vendor_contract {
+  ID            Int     @id @default(autoincrement())
+  vendor_name   String? @db.VarChar(500)
+  vendor_number String? @db.VarChar(50)
+}
+
+enum sarabun_documents_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum number_office_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum out_officeorder_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum procurement_bookout_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum procurement_hire_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum procurement_purchase_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum convention_external_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum convention_po_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum out_announcement_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum procurement_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
+}
+
+enum comercial_area_contract_Status {
+   APPROVED @map("อนุมัติ")
+   CANCELED @map("ยกเลิก")
 }

@@ -2,11 +2,10 @@ version: "3.8"
 services:
 
   nestapi:
-    image: api
     container_name: API
     build: .
     ports:
-      - "443:3000"
+      - "80:3000"
     depends_on:
       db:
         condition: service_healthy
